@@ -1,7 +1,12 @@
 <template>
     <div class="global-header">
-        <div class="left"></div>
-        <header-search class="action search" :placeholder="$t('search.placeholder')" v-model="searchValue" :data="[]" />
+        <div class="left">
+            <div v-for="action in actions" :class="['actions',{active:action.group==$route.meta.group}]">
+                <span class="action account" @click="$router.push(action.href)">
+                    {{action.name}}
+                </span>
+            </div>
+        </div>
         <div class="right">
             <!-- <notice-icon class="action notice" :tabs="noticeTabs"></notice-icon>
             <el-dropdown v-if="currentUser.name" class="action" @command="onMenuClick">
@@ -18,14 +23,9 @@
             <div v-else class="action loading-wrapper">
                 <div class="loading" v-loading="true"></div>
             </div> -->
-            <el-dropdown  class="lang" @command="onLangClick">
-                <span class="account">
-                    <span class="name el-dropdown-link">{{selectedLang}}</span><i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="lang in langs" :command="lang.value">{{lang.name}}</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
+            <div class="actions">
+                <span class="action" @click="logout">退出</span>
+            </div>
         </div>
     </div>
 </template>
@@ -33,60 +33,59 @@
 <script lang="ts">
 
     import { Component,Provide,Watch,Vue } from 'vue-property-decorator'
-    import { Dropdown,DropdownMenu,DropdownItem } from 'element-ui'
-
-    import { debounce } from 'lodash'
-    import { Loading } from 'element-ui'
-
-    import HeaderSearch from '@/components/global/search'
+    import { Dropdown,DropdownMenu,DropdownItem,Loading } from 'element-ui'
 
     Vue.use(Dropdown)
     Vue.use(DropdownMenu)
     Vue.use(DropdownItem)
-
-    const langs=[
-        {
-            name:"中文",
-            value:"zh"
-        },
-        {
-            name:"English",
-            value:"en"
-        },
-    ];
-
     Vue.use(Loading)
 
-    @Component({
-        components:{
-            HeaderSearch,
-        }
-    })
+    const actions=[
+        {
+            name:"首页",
+            href:"/",
+            group:"home"
+        },
+        {
+            name:"用户",
+            href:"/users",
+            group:"user"
+        },
+        {
+            name:"作者",
+            href:"/authors",
+            group:"author"
+        },
+        {
+            name:"内容",
+            href:"/content",
+            group:"content"
+
+        },
+        {
+            name:"邀请码",
+            href:"/code",
+            group:"code"
+        },
+        {
+            name:"设置",
+            href:"/setting",
+            group:"setting"
+        },
+    ]
+
+    @Component({})
     export default class GlobalHeader extends Vue{
 
-        @Provide() searchValue=''
-        @Provide() langs=langs;
-        @Provide() selectedLang='中文';
-        
-        onLangClick(command:string){
-            for(let index in this.langs){
-                if(command==this.langs[index].value){
-                    this.selectedLang=this.langs[index].name
-                    break;
-                }
-            }
-            this.$emit('lang-click',command)
+        @Provide() actions=actions
+
+        logout(){
+            localStorage.removeItem('token')
+            this.$router.push('/user/login')
         }
 
         mounted(){
-            var lang=localStorage.getItem("lang")
-            if(lang){
-                this.langs.forEach(item=>{
-                    if(item.value==lang){
-                        this.selectedLang=item.name
-                    }
-                })
-            }
+            
         }
 
     }
@@ -114,6 +113,15 @@
                 background: $primary-1;
             }
         }
+        .actions{
+            &.popover-open,
+            &:hover {
+                background: $primary-1;
+            }
+            &.active{
+                background-color:$primary-1;
+            }
+        }
         .action {
             cursor: pointer;
             padding: 0 12px;
@@ -124,10 +132,6 @@
             > i {
                 font-size: 16px;
                 vertical-align: middle;
-            }
-            &.popover-open,
-            &:hover {
-                background: $primary-1;
             }
         }
         .lang {
@@ -158,11 +162,23 @@
                 background: transparent;
             }
         }
-        .left{
+        .left,.right{
             height: 100%;
             display: flex;
             align-items: center;
             text-align: center;
+            padding-left:100px;
+            .actions{
+                line-height:64px;
+                height:64px;
+                width:80px;
+                padding:0 5px;
+                text-align:center;
+                .action{
+                    display:inline-block;
+                    width:100%;
+                }
+            }
             .item{
                 cursor: pointer;
                 padding: 0 12px;

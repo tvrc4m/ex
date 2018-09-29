@@ -5,20 +5,11 @@
                 <global-header :logo="logo" :current-user="currentUser" @menu-click="handleMenuClick" @lang-click="handleLangClick"></global-header>
             </el-header>
             <el-main :style="{'padding-bottom': 0}">
-                <router-view :breadcrumbNameMap="breadcrumbNameMap" />
-                <el-footer height="auto" :style="{padding: 0, flex: '0 0 auto'}">
-                    <global-footer :links="footerLinks">
-                        <template slot="copyright">
-                            <div>
-                                Copyright
-                                <ant-icon type="copyright" /> 2018 Daizhe
-                            </div>
-                        </template>
-                        <template slot="github-slot">
-                            <ant-icon class="github-icon" type="github" />
-                        </template>
-                    </global-footer>
-                </el-footer>
+                <el-card class="box-card">
+                    <router-view :breadcrumbNameMap="breadcrumbNameMap">
+                        <div slot="header"></div>    
+                    </router-view>
+                </el-card>
             </el-main>
         </el-container>
     </el-container>
@@ -27,37 +18,23 @@
 <script lang="ts">
     import { Component,Provide,Vue } from 'vue-property-decorator'
 
-    import { Container,Header,Main,Footer } from 'element-ui'
+    import { Container,Header,Main,Card } from 'element-ui'
 
-    import GlobalFooter from 'components/global/footer'
     import GlobalHeader from '@/components/global/header.vue'
-    import AntIcon from '@/components/common/anticon'
 
     Vue.use(Container)
     Vue.use(Header)
     Vue.use(Main)
-    Vue.use(Footer)
-
-    const footerLinks = [
-        {
-            key: 'github',
-            titleSlot: 'github-slot',
-            href: 'https://github.com/qidaizhe11/element-pro',
-            blankTarget: true
-        }
-    ]
+    Vue.use(Card)
 
     @Component({
         components:{
             GlobalHeader,
-            GlobalFooter,
-            AntIcon
         }
     })
     export default class LayoutBasic extends Vue{
 
         @Provide() logo:String='@/assets/logo.png'
-        @Provide() footerLinks=footerLinks
         @Provide() breadcrumbNameMap=[]
 
         get currentUser():String{
@@ -104,5 +81,30 @@
 
     .github-icon {
         font-size: 20px;
+    }
+</style>
+<style lang="scss">
+    .card-header{
+        height: 40px;
+        line-height: 40px;
+        margin-bottom:20px;
+        border-bottom:1px solid #f2f2f2;
+        .title{
+            font-size:16px;
+            font-weight: bold;
+        }
+        .actions{
+            font-size:12px;
+            float: right;
+            display:inline-block;
+            .el-button--text{
+                padding: 3px 0;
+            }
+        }
+    }
+    .pagination{
+        margin:20px 0;
+        width:100%;
+        text-align:center;
     }
 </style>
