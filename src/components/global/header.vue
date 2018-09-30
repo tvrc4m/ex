@@ -8,24 +8,23 @@
             </div>
         </div>
         <div class="right">
-            <!-- <notice-icon class="action notice" :tabs="noticeTabs"></notice-icon>
-            <el-dropdown v-if="currentUser.name" class="action" @command="onMenuClick">
-                <span class="action account">
-                    <avatar class="avatar" size="small" :src="currentUser.avatar" />
-                    <span class="name">{{currentUser.name}}</span>
-                </span>
+            <div v-if="!islogin" class="actions">
+                <span class="action" @click="login">登录</span>
+            </div>
+            <el-dropdown v-else class="account" @command="onAccountClick">
+                <span class="name el-dropdown-link">{{account.name}}</span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="user">个人中心</el-dropdown-item>
-                    <el-dropdown-item command="setting">设置</el-dropdown-item>
-                    <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+                    <el-dropdown-item command="logout">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
-            <div v-else class="action loading-wrapper">
-                <div class="loading" v-loading="true"></div>
-            </div> -->
-            <div class="actions">
-                <span class="action" @click="logout">退出</span>
-            </div>
+            <el-dropdown  class="lang" @command="onLangClick">
+                <span class="account">
+                    <span class="name el-dropdown-link">{{selectedLang}}</span><i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="lang in langs" :command="lang.value">{{lang.name}}</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
         </div>
     </div>
 </template>
@@ -34,6 +33,7 @@
 
     import { Component,Provide,Watch,Vue } from 'vue-property-decorator'
     import { Dropdown,DropdownMenu,DropdownItem,Loading } from 'element-ui'
+    import { mapGetters } from 'vuex'
 
     Vue.use(Dropdown)
     Vue.use(DropdownMenu)
@@ -45,49 +45,70 @@
             name:"首页",
             href:"/",
             group:"home"
-        },
-        {
-            name:"用户",
-            href:"/users",
-            group:"user"
-        },
-        {
-            name:"作者",
-            href:"/authors",
-            group:"author"
-        },
-        {
-            name:"内容",
-            href:"/content",
-            group:"content"
-
-        },
-        {
-            name:"邀请码",
-            href:"/code",
-            group:"code"
-        },
-        {
-            name:"设置",
-            href:"/setting",
-            group:"setting"
-        },
+        }
     ]
+
+    const langs=[
+        {
+            name:"中文",
+            value:"zh"
+        },
+        {
+            name:"English",
+            value:"en"
+        },
+    ];
 
     @Component({})
     export default class GlobalHeader extends Vue{
 
         @Provide() actions=actions
+        @Provide() langs=langs;
+        @Provide() selectedLang='中文';
 
-        logout(){
-            localStorage.removeItem('token')
-            this.$router.push('/user/login')
+        get islogin(){
+            return this.$store.getters['scatter/islogin']
+        }
+
+        get account(){
+            console.log(this.$store.state)
+            return this.$store.state.scatter.account
+        }
+        
+        onLangClick(command:string){
+            for(let index in this.langs){
+                if(command==this.langs[index].value){
+                    this.selectedLang=this.langs[index].name
+                    break;
+                }
+            }
+            this.$emit('lang-click',command)
+        }
+
+        onAccountClick(command:string){
+            if(command=='logout'){
+                this.$store.dispatch("scatter/disconnect")
+            }
         }
 
         mounted(){
-            
+            var lang=localStorage.getItem("lang")
+            if(lang){
+                this.langs.forEach(item=>{
+                    if(item.value==lang){
+                        this.selectedLang=item.name
+                    }
+                })
+            }
         }
 
+        login(){
+            this.$store.dispatch('scatter/connect').then(()=>{
+                this.$store.dispatch('scatter/identity').then((account)=>{
+                    console.log(account)
+                })
+            })
+        }
     }
 </script>
 
@@ -134,12 +155,11 @@
                 vertical-align: middle;
             }
         }
-        .lang {
+        .lang,.account {
             cursor: pointer;
             padding: 0 12px;
             transition: all 0.3s;
             height: 100%;
-            width: 100px;
             display: flex;
             align-items: center;
             text-align: center;
@@ -153,6 +173,10 @@
             &.popover-open,
             &:hover {
                 background: $primary-1;
+            }
+            .name{
+                line-height:64px;
+                height:64px;
             }
         }
         .search {
@@ -171,7 +195,7 @@
             .actions{
                 line-height:64px;
                 height:64px;
-                width:80px;
+                width:90px;
                 padding:0 5px;
                 text-align:center;
                 .action{
