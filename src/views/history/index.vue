@@ -14,12 +14,14 @@
                 </template>
             </el-table-column>
         </el-table>
+        <pagination :total="total"></pagination>
     </div>
 </template>
 
 <script lang="ts">
     import { Component,Provide,Vue } from 'vue-property-decorator'
     import { Row,Col,Select,Option,Table,TableColumn,Button } from 'element-ui'
+    import pagination from '@/components/common/pagination'
     import { TypeCoin } from '@/type/coin'
 
     Vue.use(Row)
@@ -40,12 +42,17 @@
         }
     ]
 
-    @Component({})
+    @Component({
+        components:{
+            pagination
+        }
+    })
     export default class HomeIndex extends Vue{
 
        @Provide() coins:TypeCoin[]=this.$store.state.coin.coins
        @Provide() selected_coin=this.$store.state.coin.selected
        @Provide() histories=histories
+       @Provide() total=histories.length
 
     }
 </script>

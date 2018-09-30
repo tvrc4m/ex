@@ -1,9 +1,9 @@
 <template>
     <div>
-        <el-select v-model="selected_coin" placeholder="所有币种">
+        <el-select v-model="selected_coin" placeholder="所有币种" style="margin-bottom: 20px">
             <el-option v-for="coin in coins" :key="coin.name" :label="coin.token+'@'+coin.name" :value="coin.name"></el-option>
         </el-select>
-         <el-table :data="histories" style="width: 100%">
+         <el-table :data="histories" style="width: 100%" header-cell-class-name="seller-header">
             <el-table-column prop="buyer" label="买家"></el-table-column>
             <el-table-column prop="seller" label="卖家"></el-table-column>
             <el-table-column prop="amount" label="单价"></el-table-column>
@@ -14,12 +14,14 @@
                 </template>
             </el-table-column>
         </el-table>
+        <pagination :total="total"></pagination>
     </div>
 </template>
 
 <script lang="ts">
     import { Component,Provide,Vue } from 'vue-property-decorator'
     import { Row,Col,Select,Option,Table,TableColumn,Button } from 'element-ui'
+    import pagination from '@/components/common/pagination'
     import { TypeCoin } from '@/type/coin'
 
     Vue.use(Row)
@@ -40,12 +42,17 @@
         }
     ]
 
-    @Component({})
+    @Component({
+        components:{
+            pagination
+        }
+    })
     export default class HomeIndex extends Vue{
 
        @Provide() coins:TypeCoin[]=this.$store.state.coin.coins
        @Provide() selected_coin=this.$store.state.coin.selected
        @Provide() histories=histories
+       @Provide() total=histories.length
 
        cancel(){
 
