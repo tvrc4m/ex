@@ -5,6 +5,8 @@ Vue.use(Router)
 
 const basic=()=>import('@/views/layout/basic')
 const home=()=>import('@/views/home/index')
+const history=()=>import('@/views/history/index')
+const order=()=>import('@/views/order/index')
 
 
 const routes = [
@@ -14,7 +16,27 @@ const routes = [
         children: [
             {
                 path:"",
-                component:home
+                component:home,
+                name:"home",
+                meta:{
+                    group:"home"
+                }
+            },
+            {
+                path:"/history",
+                component:history,
+                name:"history",
+                meta:{
+                    group:"history"
+                }
+            },
+            {
+                path:"/order",
+                component:order,
+                name:"order",
+                meta:{
+                    group:"order"
+                }
             },
         ]
     }

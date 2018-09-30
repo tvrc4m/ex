@@ -2,7 +2,7 @@
     <div class="global-header">
         <div class="left">
             <div v-for="action in actions" :class="['actions',{active:action.group==$route.meta.group}]">
-                <span class="action account" @click="$router.push(action.href)">
+                <span class="action" @click="$router.push(action.href)">
                     {{action.name}}
                 </span>
             </div>
@@ -17,14 +17,14 @@
                     <el-dropdown-item command="logout">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
-            <el-dropdown  class="lang" @command="onLangClick">
+           <!--  <el-dropdown  class="lang" @command="onLangClick">
                 <span class="account">
                     <span class="name el-dropdown-link">{{selectedLang}}</span><i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="lang in langs" :command="lang.value">{{lang.name}}</el-dropdown-item>
                 </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
         </div>
     </div>
 </template>
@@ -45,6 +45,16 @@
             name:"首页",
             href:"/",
             group:"home"
+        },
+        {
+            name:"成交记录",
+            href:"/history",
+            group:"history"
+        },
+        {
+            name:"订单",
+            href:"/order",
+            group:"order"
         }
     ]
 
@@ -195,7 +205,7 @@
             .actions{
                 line-height:64px;
                 height:64px;
-                width:90px;
+                width:96px;
                 padding:0 5px;
                 text-align:center;
                 .action{

@@ -1,16 +1,16 @@
 <template>
     <div>
-        <el-select v-model="selected_coin" placeholder="请选择" style="margin-bottom: 20px">
+        <el-select v-model="selected_coin" placeholder="所有币种">
             <el-option v-for="coin in coins" :key="coin.name" :label="coin.token+'@'+coin.name" :value="coin.name"></el-option>
         </el-select>
-        <el-table :data="sellers" style="width: 100%" header-cell-class-name="seller-header">
+         <el-table :data="histories" style="width: 100%">
+            <el-table-column prop="buyer" label="买家"></el-table-column>
             <el-table-column prop="seller" label="卖家"></el-table-column>
             <el-table-column prop="amount" label="单价"></el-table-column>
             <el-table-column prop="count" label="数量"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button type="primary" size="small" @click="buy">购买</el-button>
-                    <el-button type="primary" size="small" @click="cancel">撤单</el-button>
+                    <el-button type="primary" size="small" @click="cancel(scope.row)">撤单</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -30,8 +30,9 @@
     Vue.use(TableColumn)
     Vue.use(Button)
 
-    const sellers=[
+    const histories=[
         {
+            buyer:"eosluckystar",
             seller:"eostonystark",
             amount:"10.0200 EOS",
             count:12,
@@ -39,24 +40,17 @@
         }
     ]
 
-    @Component({
-        components:{
-            
-        },
-    })
+    @Component({})
     export default class HomeIndex extends Vue{
 
        @Provide() coins:TypeCoin[]=this.$store.state.coin.coins
        @Provide() selected_coin=this.$store.state.coin.selected
-       @Provide() sellers=sellers
-
-       buy(){
-
-       }
+       @Provide() histories=histories
 
        cancel(){
 
        }
+
     }
 </script>
 

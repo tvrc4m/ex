@@ -107,4 +107,12 @@
         width:100%;
         text-align:center;
     }
+    .seller-header{
+        background: #fafafa !important;
+        -webkit-transition: background .3s ease;
+        transition: background .3s ease;
+        color: rgba(0,0,0,.85) !important;
+        font-weight: 500 !important;
+        border-bottom: 1px solid #e8e8e8 !important;
+    }
 </style>
