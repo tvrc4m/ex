@@ -60,14 +60,3 @@
 <style lang="scss" scoped>
     
 </style>
-<style lang="css">
-    .ram-calc .ram-input{
-        width: 80px !important;
-        display: inline-block;
-    }
-    .ram-calc .el-input__inner{
-        height: 32px !important;
-        line-height: 32px !important;
-        width: 80px !important;
-    }
-</style>
